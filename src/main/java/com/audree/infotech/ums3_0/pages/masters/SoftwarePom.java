@@ -85,13 +85,13 @@ public class SoftwarePom extends CommonData {
 	WebElement dropdown345;
 
 	@FindBy(xpath = "//input[@formcontrolname='licenseCount']")
-	WebElement licenseCountInput;
+	public WebElement licenseCountInput;
 
-	@FindBy(xpath = "//button[normalize-space()='Submit']")
-	WebElement submitButton;
+	@FindBy(xpath = "//input[@formcontrolname='addLicenseCount']")
+	WebElement addLicenseCountInput;
 
-	@FindBy(xpath = "//button[normalize-space()='Yes']")
-	WebElement confirmYesButton;
+	@FindBy(xpath = "//input[@formcontrolname='comments']")
+	WebElement commentsInput;
 
 	public void clickMasters() throws Exception {
 		Thread.sleep(1000);
@@ -135,7 +135,8 @@ public class SoftwarePom extends CommonData {
 		test.info("Entered software description: " + description);
 	}
 
-	public void selectSoftwareOwner(String softwareOwnerDD) {
+	public void selectSoftwareOwner(String softwareOwnerDD) throws InterruptedException {
+		waitForWebElementToAppear(softwareOwner);
 		softwareOwner.click();
 		softwareOwner.sendKeys(softwareOwnerDD, Keys.ENTER);
 		test.info("Selected Software Owner : " + softwareOwnerDD);
@@ -155,7 +156,7 @@ public class SoftwarePom extends CommonData {
 		// applicapableDepartment);
 		// checkBox02.click();
 		// applicapableDepartmentMultiSelector.click();
-// If we want to select all then below method will useful
+// If we want to select all the below method will useful
 		waitForWebElementToAppear(applicapableDepartmentMultiSelector);
 		applicapableDepartmentMultiSelector.click();
 		Thread.sleep(500);
@@ -175,6 +176,18 @@ public class SoftwarePom extends CommonData {
 		licenseCountInput.clear();
 		licenseCountInput.sendKeys(count);
 		test.info("Entered license count: " + count);
+	}
+
+	public void addLicenseCount(String count) {
+		addLicenseCountInput.clear();
+		addLicenseCountInput.sendKeys(count);
+		test.info("Added License Count : " + count);
+	}
+
+	public void enterComments(String comments) {
+		commentsInput.clear();
+		commentsInput.sendKeys(comments);
+		test.info("entered comments Successfully");
 	}
 
 }

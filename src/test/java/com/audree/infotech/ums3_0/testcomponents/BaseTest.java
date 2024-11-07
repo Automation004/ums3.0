@@ -11,8 +11,8 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
@@ -21,22 +21,21 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 
 import com.audree.infotech.ums3_0.pages.masters.LoginPage;
+import com.audree.infotech.ums3_0.tests.Transactions.ApproverTest;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
-@SuppressWarnings("deprecation")
 public class BaseTest {
 	public static WebDriver driver;
 	public static ExtentReports extent;
@@ -44,29 +43,34 @@ public class BaseTest {
 	public ExtentTest test;
 	public Properties pro;
 	public Robot r;
+	public WebDriverWait wait;
 	LoginPage loginPage;
-	public WebDriverWait wait;// globally declared
+
+	protected static final Logger logger = LogManager.getLogger(ApproverTest.class);
+
+	static {
+		System.setProperty("log4j.configurationFile",
+				"C:\\Users\\sharuk.k\\eclipse-workspace\\ums3.0\\ums3-automation\\Loggers");
+	}
 
 	public Xls_Reader xls = new Xls_Reader(
 			"C:\\Users\\sharuk.k\\eclipse-workspace\\ums3.0\\ums3-automation\\src\\test\\resources\\com.exceldata\\UMS_Excel_3_0.xlsx");
 
-	@BeforeSuite(alwaysRun = true)
+	@BeforeClass(alwaysRun = true)
 	public void suiteSetUp() throws Exception {
-		if (driver == null) {
-			pro = new Properties();
-			FileInputStream ip = new FileInputStream(
-					System.getProperty("user.dir") + "\\src\\test\\resources\\com.properties\\config.properties");
-			pro.load(ip);
-			System.setProperty("webdriver.http.factory", "jdk-http-client");
-			WebDriverManager.chromedriver().setup();
-			driver = new ChromeDriver();
-			driver.manage().window().maximize();
-			driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-			driver.get(pro.getProperty("url"));
-			// Initialize the LoginPage object
-			loginPage = new LoginPage(test, driver);
+		pro = new Properties();
+		FileInputStream ip = new FileInputStream(
+				System.getProperty("user.dir") + "\\src\\test\\resources\\com.properties\\config.properties");
+		pro.load(ip);
+		System.setProperty("webdriver.http.factory", "jdk-http-client");
+		WebDriverManager.chromedriver().setup();
+		driver = new ChromeDriver();
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+		driver.get(pro.getProperty("url"));
+		// Initialize the LoginPage object
+		loginPage = new LoginPage(test, driver);
 
-		}
 	}
 
 	public static ExtentReports getReportObject(String testName) {
@@ -89,42 +93,37 @@ public class BaseTest {
 		return extent;
 	}
 
-	@BeforeSuite(alwaysRun = true)
+	@BeforeClass(alwaysRun = true)
 	public void initializeExtentTest() {
 		// Get the singleton instance of ExtentReports
 		extent = getReportObject(this.getClass().getSimpleName());
 		test = extent.createTest(this.getClass().getSimpleName());
+		System.out.println(this.getClass().getSimpleName());
 	}
 
-	@AfterMethod()
+	@AfterClass()
 	public void EndReport() {
 		extent.flush();
 		System.out.println("Flush Completed");
 	}
 
-	public void loginTest() {
-		// Use the LoginPage methods to perform the login
-		loginPage.setUserId(pro.getProperty("Initiator"));
-		loginPage.setPassword(pro.getProperty("Password"));
+	public void loginTest(String username, String password) {
 		loginPage.clickLogin();
-	}
+		test.log(Status.PASS,
+				"Clicked on the login button without entering username or password to check for validation.");
+		loginPage.setUserId(username);
+		test.log(Status.PASS, "Entered username: " + username);
+		loginPage.clickLogin();
+		test.log(Status.PASS, "Clicked on the login button without entering password to check for validation.");
+		loginPage.setPassword(password);
+		test.log(Status.PASS, "Entered password.");
+		loginPage.clickLogin();
+		test.log(Status.PASS, "Clicked on the login button to submit credentials.");
+		test.log(Status.INFO, "Login test completed.");
 
-	public static void Login(String LoginId, String Password) throws Exception {
-		driver.findElement(By.xpath("//button[normalize-space()='Login']")).click();
-		driver.findElement(By.xpath("//input[@placeholder='User ID']")).sendKeys(LoginId);
-		driver.findElement(By.xpath("//button[normalize-space()='Login']")).click();
-		driver.findElement(By.xpath("//input[@placeholder='Password']")).sendKeys(Password);
-		driver.findElement(By.xpath("//button[normalize-space()='Login']")).click();
-		boolean terminationMessage = driver.findElement(By.xpath("(//button[@id='BtnWApp'])[1]")).isDisplayed();
-		if (terminationMessage) {
-			driver.findElement(By.xpath("(//button[@id='BtnWApp'])[1]")).click();
-			System.out.println(terminationMessage);
-		}
-		Thread.sleep(1500);
 	}
 
 	// Takes Screenshot
-	@SuppressWarnings("unused")
 	protected String getScreenshot(WebDriver driver, String screenshotName) throws IOException {
 		String dateName = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());// time stamp
 		File source = ((TakesScreenshot) (driver)).getScreenshotAs(OutputType.FILE);
@@ -154,6 +153,14 @@ public class BaseTest {
 		JavascriptExecutor js = (JavascriptExecutor) driver;
 		js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
 		Thread.sleep(3000);
+		test.info("Scrolling the page to down");
+	}
+
+	public void scrollElementIntoView(WebElement element) throws Exception {
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("arguments[0].scrollIntoView(true);", element);
+		test.info("Scrolling the element into view");
+		Thread.sleep(500);
 	}
 
 	public void scrollPageup() throws Exception {
@@ -194,14 +201,14 @@ public class BaseTest {
 		// file uploads by handling OS-level dialogs, which Selenium alone can't
 		// manipulate.
 		r = new Robot();
-		r.delay(1500);
+		r.delay(1000);
 		// put path to file in a clipboard
 		StringSelection s = new StringSelection(path);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(s, null);
 		// ctrl+V press
 		r.keyPress(KeyEvent.VK_CONTROL);// press on ctrl key+copy
 		r.keyPress(KeyEvent.VK_V);// press on ctrl key+paste
-		r.delay(1500);
+		r.delay(500);
 		r.keyRelease(KeyEvent.VK_CONTROL);
 		r.keyRelease(KeyEvent.VK_V);
 		r.delay(1000);
@@ -209,6 +216,7 @@ public class BaseTest {
 		r.keyPress(KeyEvent.VK_ENTER);
 		r.keyRelease(KeyEvent.VK_ENTER);
 		r.delay(500);
+		test.pass("File uploaded Successfully");
 		System.out.println("uploaded Successfully");
 	}
 
@@ -219,10 +227,10 @@ public class BaseTest {
 		WebElement AttachFile = driver.findElement(By.xpath("//*[@type='file']"));
 		Actions action = new Actions(driver);
 		action.click(AttachFile).perform();
-		Thread.sleep(3000);
+		test.pass("File Attached Successfully");
+		Thread.sleep(2000);
 	}
 
-	// public WebElement MoveCursor;
 	public void MoveCursor() throws Exception {
 		WebElement MoveCursor;
 		Actions actions = new Actions(driver);

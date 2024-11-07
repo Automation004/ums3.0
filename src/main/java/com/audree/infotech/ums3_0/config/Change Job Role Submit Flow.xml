@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="UMS3.0 Test Suite" verbose="1">
+	<test name="Transactions Submit Flow">
+		<classes>
+			<class name="com.audree.infotech.ums3_0.tests.Transactions.ChangeJobRoleTest" />
+			<class name="com.audree.infotech.ums3_0.tests.Transactions.IHodNewJobRoleTest" />
+			<class name="com.audree.infotech.ums3_0.tests.Transactions.ReviewerTest" />
+			<class name="com.audree.infotech.ums3_0.tests.Transactions.FinalReviewerTest" />
+			<class name="com.audree.infotech.ums3_0.tests.Transactions.ApproverTest" />
+			<class name="com.audree.infotech.ums3_0.tests.Transactions.CreatorTest" />
+		</classes>
+	</test>
+</suite>

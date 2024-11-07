@@ -1,0 +1,11 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="UMS3.0 Configuration Suite" verbose="1" parallel="false">
+	<test name="Configurations Test">
+		<classes>
+			<class
+				name="com.audree.infotech.ums3_0.tests.masters.ConfigurationsTest" />
+		</classes>
+	</test>
+
+</suite>

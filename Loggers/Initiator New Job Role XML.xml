@@ -1,0 +1,12 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="UMS3.0 Test Suite" verbose="1" parallel="false">
+
+	<test name="Initiator New Job Role Test">
+		<classes>
+			<class
+				name="com.audree.infotech.ums3_0.tests.Transcations.InitiatorNewJobRoleTest" />
+		</classes>
+	</test>
+
+</suite>

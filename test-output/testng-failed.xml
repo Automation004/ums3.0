@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [UMS 3.0 Automation Suite]" guice-stage="DEVELOPMENT">
+  <test thread-count="5" name="Masters Test(failed)">
+    <classes>
+      <class name="com.audree.infotech.ums3_0.tests.masters.ConfigurationsTest">
+        <methods>
+          <include name="testJobRoleCreation"/>
+          <include name="suiteSetUp"/>
+          <include name="initializeExtentTest"/>
+          <include name="EndReport"/>
+        </methods>
+      </class> <!-- com.audree.infotech.ums3_0.tests.masters.ConfigurationsTest -->
+    </classes>
+  </test> <!-- Masters Test(failed) -->
+</suite> <!-- Failed suite [UMS 3.0 Automation Suite] -->

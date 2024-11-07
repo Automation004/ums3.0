@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [UMS3.0 Test Suite]" guice-stage="DEVELOPMENT">
+  <test thread-count="5" name="Transcations Submit Flow(failed)">
+    <classes>
+      <class name="com.audree.infotech.ums3_0.tests.Reports.PendingRequest">
+        <methods>
+          <include name="testPendingRequest"/>
+          <include name="suiteSetUp"/>
+          <include name="initializeExtentTest"/>
+          <include name="EndReport"/>
+        </methods>
+      </class> <!-- com.audree.infotech.ums3_0.tests.Reports.PendingRequest -->
+      <class name="com.audree.infotech.ums3_0.tests.Reports.UserSoftwareSummaryTest">
+        <methods>
+          <include name="testPendingRequest"/>
+          <include name="suiteSetUp"/>
+          <include name="initializeExtentTest"/>
+          <include name="EndReport"/>
+        </methods>
+      </class> <!-- com.audree.infotech.ums3_0.tests.Reports.UserSoftwareSummaryTest -->
+      <class name="com.audree.infotech.ums3_0.tests.Reports.InActiveRequestTracking">
+        <methods>
+          <include name="suiteSetUp"/>
+          <include name="initializeExtentTest"/>
+          <include name="EndReport"/>
+          <include name="testPendingRequest"/>
+        </methods>
+      </class> <!-- com.audree.infotech.ums3_0.tests.Reports.InActiveRequestTracking -->
+      <class name="com.audree.infotech.ums3_0.tests.Reports.UserStatusReportTest">
+        <methods>
+          <include name="testPendingRequest"/>
+          <include name="suiteSetUp"/>
+          <include name="initializeExtentTest"/>
+          <include name="EndReport"/>
+        </methods>
+      </class> <!-- com.audree.infotech.ums3_0.tests.Reports.UserStatusReportTest -->
+    </classes>
+  </test> <!-- Transcations Submit Flow(failed) -->
+</suite> <!-- Failed suite [UMS3.0 Test Suite] -->

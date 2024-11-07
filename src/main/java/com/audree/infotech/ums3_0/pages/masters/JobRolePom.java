@@ -1,7 +1,5 @@
 package com.audree.infotech.ums3_0.pages.masters;
-
 import java.time.Duration;
-import java.util.List;
 import java.util.Properties;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -17,6 +19,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.asserts.SoftAssert;
 
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
 
 public class CommonData {
 	public static WebDriver driver;
@@ -28,26 +31,48 @@ public class CommonData {
 	public CommonData(WebDriver driver, ExtentTest _test, Properties _pro)// constructor call
 	{
 		CommonData.driver = driver;
-		CommonData.test = _test;
+		CommonData.setTest(_test);
 		CommonData.pro = _pro;
 		PageFactory.initElements(driver, this);
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 	}
 
 	@FindBy(xpath = "//button[normalize-space()='Submit']")
-	WebElement submitButton1;
+	public WebElement submitButton1;
+
 	@FindBy(xpath = "(//button[normalize-space()='Submit'])[2]")
-	WebElement submitButton2;
+	public WebElement submitButton2;
+
+	@FindBy(xpath = "(//button[normalize-space()='Return'])[1]")
+	public WebElement ReturnButton;
+
 	@FindBy(xpath = "(//button[normalize-space()='No'])[3]")
 	WebElement noButton;
+
 	@FindBy(xpath = "//button[normalize-space()='Yes']")
 	WebElement yesButton;
-	@FindBy(xpath = "//input[@formcontrolname='password']")
-	WebElement password;
-	@FindBy(xpath = "//button[normalize-space()='Ok']")
-	WebElement okButton;
 
-	
+	@FindBy(xpath = "//input[@formcontrolname='password']")
+	protected WebElement password;
+
+	@FindBy(xpath = "//button[normalize-space()='Ok']")
+	public WebElement okButton;
+
+	@FindBy(xpath = "//button[normalize-space()='Update']")
+	public WebElement updateButton1;
+
+	@FindBy(xpath = "//*[@formcontrolname='comments']")
+	public WebElement comments;
+
+	@FindBy(xpath = "(//*[@class='dropdown-btn'])[1]")
+	public WebElement multiSelectClick01;
+
+	@FindBy(xpath = "(//*[@class='dropdown-btn'])[2]")
+	public WebElement multiSelectClick02;
+
+	@FindBy(xpath = "//*[contains(text(),'Get')]")
+	public WebElement getButton;
+
 	public void waitForElementToAppear(By findBy) {
 
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
@@ -58,7 +83,17 @@ public class CommonData {
 
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.visibilityOf(findBy));
+	}
 
+	public boolean isElementPresent(WebElement element) {
+		try {
+			// Adjust the wait time based on your requirements
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
+			wait.until(ExpectedConditions.visibilityOf(element));
+			return true;
+		} catch (TimeoutException e) {
+			return false;
+		}
 	}
 
 	public void scrollPagedown() throws Exception {
@@ -72,27 +107,60 @@ public class CommonData {
 		wait.until(ExpectedConditions.invisibilityOf(ele));
 	}
 
-	public void submitEsigantureActions(boolean useSecondButton) throws Exception {
-		waitForWebElementToAppear(submitButton1);
-		submitButton1.click();
-		noButton.click();
-		submitButton1.click();
-		yesButton.click();
-	    WebElement submitButton = useSecondButton ? submitButton2 : submitButton1;
-	    submitButton.click();
-		password.sendKeys(pro.getProperty("Password"));
-		submitButton.click();
-		okButton.click();
+	public void enterPassword(String passwordValue) {
+		password.sendKeys(passwordValue);
+		test.log(Status.PASS, "Entered password.");
 	}
 
-	// Helper method to check if the element is present
-	public boolean isElementPresent(By locator) {
-		try {
-			driver.findElement(locator);
-			return true;
-		} catch (NoSuchElementException e) {
-			return false;
-		}
+	public void submitEsignatureActions(boolean useSecondButton) throws Exception {
+		getTest().info("Starting e-signature submission process");
+		waitForWebElementToAppear(submitButton1);
+		getTest().info("First submit button appeared");
+		submitButton1.click();
+		getTest().info("Clicked submit button");
+		noButton.click();
+		getTest().info("Clicked 'No' button");
+		submitButton1.click();
+		getTest().info("Clicked submit button again");
+		yesButton.click();
+		getTest().info("Clicked 'Yes' button");
+		WebElement submitButton = useSecondButton ? submitButton2 : submitButton1;
+		getTest().info("Using " + (useSecondButton ? "second" : "first") + " submit button");
+		submitButton.click();
+		getTest().info("Clicked submit button");
+		password.sendKeys(pro.getProperty("Password"));
+		getTest().info("Entered password");
+		submitButton.click();
+		getTest().info("Clicked submit button after entering password");
+		okButton.click();
+		getTest().info("Clicked OK button");
+		getTest().pass("Submission of record successfully processed");
+	}
+
+	public void updateEsignatureActions(boolean useSecondButton) throws Exception {
+		getTest().info("Starting e-signature update process");
+		waitForWebElementToAppear(updateButton1);
+		getTest().info("First update button appeared");
+		updateButton1.click();
+		getTest().info("Clicked first update button");
+		noButton.click();
+		getTest().info("Clicked 'No' button");
+		updateButton1.click();
+		getTest().info("Clicked first update button again");
+		yesButton.click();
+		getTest().info("Clicked 'Yes' button");
+		WebElement submitButton = useSecondButton ? submitButton2 : submitButton1;
+		getTest().info("Using " + (useSecondButton ? "second" : "first") + " submit button");
+		submitButton.click();
+		getTest().info("Clicked submit button");
+		password.sendKeys(pro.getProperty("Password"));
+		getTest().info("Entered password");
+		submitButton.click();
+		getTest().info("Clicked submit button after entering password");
+		okButton.click();
+		getTest().info("Clicked OK button");
+
+		getTest().pass("Updation of record successfully processed");
 	}
 
 	public void closeOpenedFile() throws Exception {
@@ -107,6 +175,37 @@ public class CommonData {
 		JavascriptExecutor jj = (JavascriptExecutor) driver;
 		jj.executeScript("window.scrollTo(0,1000)", "");
 		Thread.sleep(2000);
+	}
+
+	@FindBy(xpath = "//button[normalize-space()='Save']")
+	public WebElement saveButton;
+
+	@FindBy(xpath = "(//input[@placeholder='search' or @placeholder='Search...'])[1]")
+	public WebElement searchPlaceHolder;
+
+	@FindBy(xpath = "//input[@type='search']")
+	public WebElement searchType;
+	
+	@FindBy(xpath = "(//*[@placeholder='Search'])[1]")
+	public WebElement placeHolder;
+
+	@FindBy(xpath = "//*[contains(text(),'Select All')]")
+	public WebElement checkBox01;
+
+	@FindBy(xpath = "(//input[@type='checkbox'])[2]")
+	public WebElement checkBox02;
+
+	public void searchPlaceHolder(String x) {
+		searchPlaceHolder.sendKeys(x);
+
+	}
+
+	@FindBy(xpath = "(//button[@class='btn btn-primary xsBtn'])[1]")
+	public WebElement editActionClick;
+
+	public void editActionButton() {
+		editActionClick.click();
+		getTest().info("Edit action Button Clicked Successfully");
 	}
 
 	// Radio_Button_1
@@ -134,14 +233,15 @@ public class CommonData {
 		Thread.sleep(300);
 
 	}
+
+	public static ExtentTest getTest() {
+		return test;
+	}
+
+	public static void setTest(ExtentTest test) {
+		CommonData.test = test;
+	}
 }
-
-
-
-
-
-
-
 
 //// Method to verify the validation message
 //public void verifyValidationMessage(WebElement validationElement, String expectedValidationMessage) {
